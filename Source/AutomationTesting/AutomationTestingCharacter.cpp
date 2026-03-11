@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "AutomationTesting.h"
+#include "Components/InventoryComponent.h"
 
 AAutomationTestingCharacter::AAutomationTestingCharacter()
 {
@@ -45,9 +46,11 @@ AAutomationTestingCharacter::AAutomationTestingCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
+	
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent"); 
 }
 
 void AAutomationTestingCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

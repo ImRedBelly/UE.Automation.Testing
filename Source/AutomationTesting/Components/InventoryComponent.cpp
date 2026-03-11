@@ -1,0 +1,43 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "InventoryComponent.h"
+
+UInventoryComponent::UInventoryComponent()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
+void UInventoryComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	const UEnum* InventoryTypes = StaticEnum<EInventoryItemType>();
+	check(InventoryTypes);
+	for (int32 i = 0; i < InventoryTypes->NumEnums() - 1; ++i)
+	{
+		const EInventoryItemType EnumElem = static_cast<EInventoryItemType>(i);
+		const FString EnumElemName = UEnum::GetValueAsString(EnumElem);
+		const bool LimitCheckCond = InventoryLimits.Contains(EnumElem) && InventoryLimits[EnumElem] >= 0;
+		checkf(LimitCheckCond, TEXT("Limit for %s doesn't exist or less then zero"), *EnumElemName);
+	}
+}
+
+bool UInventoryComponent::TryToAddItem(const FInventoryData& Data)
+{
+	if (Data.Score < 0) return false;
+	if (!Inventory.Contains(Data.Type))
+	{
+		Inventory.Add(Data.Type, 0);
+	}
+
+	const auto NextScore = Inventory[Data.Type] + Data.Score;
+	if (NextScore > InventoryLimits[Data.Type]) return false;
+
+	Inventory[Data.Type] = NextScore;
+	return true;
+}
+
+int32 UInventoryComponent::GetInventoryAmountByType(EInventoryItemType Type) const
+{
+	return Inventory.Contains(Type) ? Inventory[Type] : 0;
+}

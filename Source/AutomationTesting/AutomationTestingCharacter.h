@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "AutomationTestingCharacter.generated.h"
 
+class UInventoryComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
@@ -49,6 +50,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UInventoryComponent* InventoryComponent;
+	
 public:
 
 	/** Constructor */
