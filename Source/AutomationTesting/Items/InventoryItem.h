@@ -9,7 +9,7 @@
 
 class USphereComponent;
 
-UCLASS()
+UCLASS(Abstract)
 class AUTOMATIONTESTING_API AInventoryItem : public AActor
 {
 	GENERATED_BODY()

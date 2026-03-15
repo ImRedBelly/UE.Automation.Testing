@@ -1,6 +1,6 @@
 // My game copyright
 
-#if (WITH_DEV_AUTOMATION_TESTS || WITH_PERF_AUTOMATION_TESTS)
+#if WITH_AUTOMATION_TESTS
 
 #include "AutomationTesting/Tests/InventoryComponentTests.h"
 #include "CoreMinimal.h"
@@ -8,7 +8,7 @@
 #include "Components/InventoryComponent.h"
 #include "Misc/AutomationTest.h"
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FComponentCouldBeCreated, "TPSGame.Components.Inventory.ComponentCouldBeCreated",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FComponentCantBeCreated, "TPSGame.Components.Inventory.ComponentCantBeCreated",
                                  EAutomationTestFlags::ProductFilter |
                                  EAutomationTestFlags_ApplicationContextMask);
 
@@ -52,7 +52,7 @@ namespace Test
 }
 
 
-bool FComponentCouldBeCreated::RunTest(const FString& Parameters)
+bool FComponentCantBeCreated::RunTest(const FString& Parameters)
 {
 	const UInventoryComponent* InventoryComponent = NewObject<UInventoryComponent>();
 	if (!TestNotNull("Inventory component exists", InventoryComponent)) return false;
