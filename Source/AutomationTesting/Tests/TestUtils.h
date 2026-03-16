@@ -38,6 +38,8 @@ const auto EnumElem = static_cast<TYPE>(index);
 		};
 
 		UWorld* GetTestGameWorld();
+
+		void CallFuncByNameWithParams(UObject* Object, const FString& FuncName, const TArray<FString>& Params);
 	}
 }
 #endif
