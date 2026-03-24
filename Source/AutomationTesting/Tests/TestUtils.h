@@ -16,9 +16,9 @@ namespace TestGame
 	};
 
 #define ENUM_LOOP_START(TYPE, EnumElem)                                    \
-for (int32 index = 0; index < StaticEnum<TYPE>()->NumEnums() - 1; ++index) \
+for (int32 Index = 0; Index < StaticEnum<TYPE>()->NumEnums() - 1; ++Index) \
 {                                                                          \
-const auto EnumElem = static_cast<TYPE>(index);
+const auto EnumElem = static_cast<TYPE>(Index);
 #define ENUM_LOOP_END }
 
 	namespace Test

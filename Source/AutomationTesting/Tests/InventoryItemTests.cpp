@@ -33,6 +33,11 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FInventoryCanBeTaken, "TPSGame.Items.Inventory.
                                  EAutomationTestFlags::ProductFilter |
                                  EAutomationTestFlags_ApplicationContextMask);
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMeshForEveryInventoryItemShouldExist,
+                                 "TPSGame.Items.Inventory.MeshForEveryInventoryItemShouldExist",
+                                 EAutomationTestFlags::ProductFilter |
+                                 EAutomationTestFlags_ApplicationContextMask);
+
 
 using namespace TestGame::Test;
 
@@ -151,24 +156,54 @@ bool FInventoryCanBeTaken::RunTest(const FString& Parameters)
 	TArray<AActor*> Pawns;
 	UGameplayStatics::GetAllActorsOfClass(World, AAutomationTestingCharacter::StaticClass(), Pawns);
 	if (!TestTrueExpr(Pawns.Num() == 1)) return false;
-	
+
 	const auto Character = Cast<AAutomationTestingCharacter>(Pawns[0]);
 	if (!TestNotNull("TPSCharacter exists", Character)) return false;
-	
+
 	const auto InvComp = Character->FindComponentByClass<UInventoryComponent>();
 	if (!TestNotNull("InvComp exists", InvComp)) return false;
 	TestTrueExpr(InvComp->GetInventoryAmountByType(InvData.Type) == 0);
-	
+
 	Character->SetActorLocation(InitialTransform.GetLocation());
-	
+
 	TestTrueExpr(InvComp->GetInventoryAmountByType(InvData.Type) == InvData.Score);
 	TestTrueExpr(!IsValid(InvItem));
-	
+
 	TArray<AActor*> InvItems;
 	UGameplayStatics::GetAllActorsOfClass(World, AInventoryItem::StaticClass(), InvItems);
 	TestTrueExpr(InvItems.Num() == 0);
-	
+
 	return true;
 }
+
+
+bool FMeshForEveryInventoryItemShouldExist::RunTest(const FString& Parameters)
+{
+	LevelScope("/Game/Tests/EmptyTestLevel");
+
+	UWorld* World = GetTestGameWorld();
+	if (!TestNotNull("World exists", World)) return false;
+
+	ENUM_LOOP_START(EInventoryItemType, Element)
+
+		const FTransform InitialTransform{FVector{1000.0f}};
+		AInventoryItem* InvItem = CreateBlueprint<AInventoryItem>(World, InventoryItemBPName, InitialTransform);
+		if (!TestNotNull("Inventory item exists", InvItem)) return false;
+
+		constexpr FInventoryData InvData{EInventoryItemType::Cylinder, 13};
+		const FLinearColor Color = FLinearColor::Yellow;
+		CallFuncByNameWithParams(InvItem, "SetInventoryData", {InvData.ToString(), Color.ToString()});
+
+		const auto StaticMeshComp = InvItem->FindComponentByClass<UStaticMeshComponent>();
+		if (!TestNotNull("Static mesh component exists", StaticMeshComp)) return false;
+
+		const FString MeshMessage = FString::Printf(TEXT("Static mesh for %s exists"), *UEnum::GetValueAsString(Element));
+		TestNotNull(*MeshMessage, StaticMeshComp->GetStaticMesh().Get());
+
+	ENUM_LOOP_END
+
+	return true;
+}
+
 
 #endif
