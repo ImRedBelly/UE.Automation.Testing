@@ -30,6 +30,13 @@ const auto EnumElem = static_cast<TYPE>(Index);
 			return (World && Blueprint) ? World->SpawnActor<T>(Blueprint->GeneratedClass, Transform) : nullptr;
 		}
 
+		template <typename T>
+		T* CreateBlueprintDeferred(UWorld* World, const FString& Name,const FTransform& Transform = FTransform::Identity)
+		{
+			const UBlueprint* Blueprint = LoadObject<UBlueprint>(nullptr, *Name);
+			return (World && Blueprint) ? World->SpawnActorDeferred<T>(Blueprint->GeneratedClass, Transform) : nullptr;
+		}
+
 		class LevelScope
 		{
 		public:
